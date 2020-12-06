@@ -4,18 +4,42 @@ let empPayrollList;
 //as soon the page loades we want this inner html function to be called
 window.addEventListener('DOMContentLoaded',(event)=>
 {
-    //caling to read from local storage
-    empPayrollList= getEmployeePayrollDataFromStorage();
-    createInnerHtml();
-    //updating the count of elements by setting textcontent to lenth of
-    document.querySelector(".emp-count").textContent= empPayrollList.length;
-    localStorage.removeItem('editEmp');
+  if(site_properties.use_local_storage.match("true"))
+  {
+      getEmployeePayrollDataFromStorage();
+  }
+  else
+      //if we want to use the json server then we will get data from json server
+      getEmployeePayrollDataFromServer();
 });
 
 //calling from eventlistener as soon as the web page is loaded
 const getEmployeePayrollDataFromStorage= ()=>{
     //it will go the local storage fetch the info if it is there convert to json otherwise return empty list
-    return localStorage.getItem('EmployeePayrollList')?JSON.parse(localStorage.getItem('EmployeePayrollList')):[];
+    empPayrollList= localStorage.getItem('EmployeePayrollList')?JSON.parse(localStorage.getItem('EmployeePayrollList')):[];
+    processEmployeePayrollDataResponse();
+}
+//this method is created to get common function calls from getEmployeeDataStorage and getEmpFromJsonServer
+//it will create inner html and update count
+//it will receive synchronous calls from loacl storage func and async calls from json server response func
+const processEmployeePayrollDataResponse=()=>{
+  document.querySelector(".emp-count").textContent=empPayrollList.length;
+  createInnerHtml();
+  localStorage.removeItem('editEmp');
+}
+
+const getEmployeePayrollDataFromServer=()=>
+{
+    makeServiceCall("GET",site_properties.server_url,true)
+        .then(responseText=>{
+            empPayrollList= JSON.parse(responseText);
+            processEmployeePayrollDataResponse();
+        })
+        .catch(error=>{
+            console.log("GET Error Status: "+JSON.stringify(error));
+            empPayrollList=[];
+            processEmployeePayrollDataResponse();
+        })
 }
 
 //creating inner html to dynamically input data during run time from js file
