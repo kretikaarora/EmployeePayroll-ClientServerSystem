@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             return;
         }
         try{
-            (new EmployeePayRoll()).name = name.value;
+            checkName(name.value);
             textError.textContent = "";
         }catch(e){
             textError.textContent = e;
@@ -50,7 +50,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         try{
             let date = getInputValueById('#day')+" "+getInputValueById('#month')+" "+getInputValueById('#year');
             date = Date.parse(date);
-            (new EmployeePayRoll()).startDate = date;
+            checkStartDate(date);
             dateError.textContent = "";
         }catch(e){
             dateError.textContent = e;
@@ -85,7 +85,11 @@ const save = (event)=>{
 };
 
 const setEmployeePayrollObject = () => {
-    // if(!isUpdate) employeePayrollObj = new EmployeePayRoll();
+    //now it will only create an id when there is an update in the local storage and not with the server client 
+    //it will only call the createNewEmployeeId when both conditions are filled
+    if(!isUpdate && site_properties.use_local_storage.match("true")){
+        employeePayrollObj.id= createNewEmployeeId();
+    }
     employeePayrollObj._name = getInputValueById('#name');
     employeePayrollObj._profilePic = getSelectedValues('[name=profile]').pop();
     employeePayrollObj._gender = getSelectedValues('[name=gender]').pop();
@@ -105,36 +109,27 @@ function createAndUpdateStorage()
     //check if list exists
     if(employeePayrollList)
     {
-        let empPayrollData= employeePayrollList.find(empData=>empData._id==employeePayrollObj._id)
+        let empPayrollData= employeePayrollList.find(empData=>empData.id==employeePayrollObj.id)
         //if data does not existfor a particular id directly push the data into list with a new id
         if(!isUpdate)
         {
-            employeePayrollList.push(createEmployeePayrollData());
+            employeePayrollList.push(employeePayrollObj);
         }
         else
         {
             //if that id exists find index for that and splice it 
             //first delete data on that index and then add that updated data
             
-            const index= employeePayrollList.map(empData=>empData._id).indexOf(empPayrollData._id);
-            employeePayrollList.splice(index,1,createEmployeePayrollData(empPayrollData._id));
+            const index= employeePayrollList.map(empData=>empData.id).indexOf(empPayrollData.id);
+            employeePayrollList.splice(index,1,employeePayrollObj);
         }
     }
     //otherwise pass the data in teh form of an array
     else
     {
-        employeePayrollList=[createEmployeePayrollData()]
+        employeePayrollList=[employeePayrollObj]
     }
     localStorage.setItem("EmployeePayrollList",JSON.stringify(employeePayrollList));   
-}
-const createEmployeePayrollData = (id) => {
-    //creating an instance of EmployeePayroll class
-    // let employeePayrollData = new EmployeePayRoll();
-    //if id does not exist create new emp id
-    if (!id) employeePayrollObj._id = createNewEmployeeId();
-    //else add in that id only
-    else employeePayrollObj._id = id;
-    return employeePayrollObj;
 }
 const createNewEmployeeId = () => {
     let empID = localStorage.getItem("EmployeeID");
