@@ -63,26 +63,50 @@ window.addEventListener('DOMContentLoaded', (event) => {
 // uc3 - defining the save method for saving all emp details
 //this save method was already declared in the form onsubmit="save()";
 const save = (event)=>{ 
-    try{
-        //prevents removing of data, if there is error in name or date
-        event.preventDefault();
-        //if there is error, then form will not be submitted
-        event.stopPropagation();
-        setEmployeePayrollObject(); 
-        createAndUpdateStorage();
-        /*//storing the value returned by the function
-        let employeePayrollData=createEmployeePayroll(); 
-        //calling function to store the employee data in it if is extracted in the above line properly
-        createAndUpdateStorage(employeePayrollData);*/
-        //resetForm();
-        //after resetting, moving back to home page.
-        window.location.replace(site_properties.home_page);
-    }
-    catch(e)
+   //prevents removing of data, if there is error in name or date
+   event.preventDefault();
+   //if there is error, then form will not be submitted
+   event.stopPropagation();
+   try
+   {
+       setEmployeePayrollObject(); 
+       if(site_properties.use_local_storage.match("true"))
+       {
+           //after adding values, create and update storage is called where values are added into local storage or updated
+           createAndUpdateStorage();
+           resetForm();
+           //after resetting, moving back to home page.
+           window.location.replace(site_properties.home_page);
+       }
+       else createOrUpdateEmployeePayroll();
+   }
+   catch(e)
+   {
+       return;
+   }
+}
+
+//function created for storing data into json sever
+const createOrUpdateEmployeePayroll=()=>
+{
+    let postURL= site_properties.server_url;
+    let methodCall="POST";
+    if(isUpdate)
     {
-        return;
+        methodCall="PUT";
+        postURL=postURL+employeePayrollObj.id.toString();
     }
-};
+    makeServiceCall(methodCall,postURL,true,employeePayrollObj)
+        .then(responseText=>
+            {
+                resetForm();
+                window.location.replace(site_properties.home_page);                
+            })
+        .catch(error=>
+            {
+                throw error;
+            })
+}
 
 const setEmployeePayrollObject = () => {
     //now it will only create an id when there is an update in the local storage and not with the server client 

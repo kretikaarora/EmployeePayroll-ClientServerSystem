@@ -36,6 +36,18 @@
       "_note": "",
       "_profilePic": "../assets/Ellipse -8.png",
       "id": 3
+    },
+    {
+      "_name": "KretikaArora",
+      "_profilePic": "../assets/Ellipse 1.png",
+      "_gender": "male",
+      "_department": [
+        "HR"
+      ],
+      "_salary": "464000",
+      "_note": "mm",
+      "_startDate": "17 Oct 2014",
+      "id": 4
     }
   ]
 }
