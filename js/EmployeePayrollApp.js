@@ -1,10 +1,7 @@
 class EmployeePayRoll 
 {
     //we are adding this id to use it in the form by which we will update delete and find values
-    get id(){return this._id;}
-    set(id){
-        this._id=id;
-    }
+    id;
 
     get name() { return this._name; }
     set name(name) { 

@@ -37,8 +37,8 @@ const createInnerHtml=()=>{
           </td>
           <td>${empPayrollData._salary}</td>
           <td>${stringifyDate(empPayrollData._startDate)}</td>
-          <td><img id="${empPayrollData._id}" onclick= "remove(this)" alt="delete" src="../assets/delete-black-18dp (1).svg">
-            <img id="${empPayrollData._id}" onclick= "update(this)" alt="edit" src="../assets/create-black-18dp (1).svg "></td>
+          <td><img id="${empPayrollData.id}" onclick= "remove(this)" alt="delete" src="../assets/delete-black-18dp (1).svg">
+            <img id="${empPayrollData.id}" onclick= "update(this)" alt="edit" src="../assets/create-black-18dp (1).svg "></td>
     </tr>`;
     }
     document.querySelector('#table-display').innerHTML=innerHtml;
@@ -64,11 +64,11 @@ const getDeptHtml= (deptList)=>
 //here this is node that is passed 
 const remove= (node)=>{
   //using empPayrollList we are retrieving the employee data  whose employee id is same as node id
-  let empPayrollData= empPayrollList.find(empData=>empData._id == node.id);
+  let empPayrollData= empPayrollList.find(empData=>empData.id == node.id);
   //if data does not exist then function is returned
   if(!empPayrollData) return;
   //employeepayrolllist is converted into a map array of ids for finding index
-  const index= empPayrollList.map(empData=>empData._id).indexOf(empPayrollData._id);
+  const index= empPayrollList.map(empData=>empData.id).indexOf(empPayrollData.id);
   //using splice to remove element from array
   empPayrollList.splice(index,1);
   //setting into local storage by converting into json format
@@ -82,7 +82,7 @@ const remove= (node)=>{
 //uc2 update function
 const update= (node)=>{
   //using empPayrollList we are retrieving the employee data  whose employee id is same as node id
-  let empPayrollData= empPayrollList.find(empData=>empData._id == node.id);
+  let empPayrollData= empPayrollList.find(empData=>empData.id == node.id);
   //if emplPayrollData is null then it is returned
   if(!empPayrollData) return;
   //setting local storage by converting into json
@@ -107,7 +107,7 @@ const createEmployeePayrollJSON = () => {
         _salary: '500000',
         _startDate: '29 Oct 2019',
         _note: '',
-        _id: new Date().getTime(),
+        id: new Date().getTime(),
         _profilePic: '..\assets\Ellipse 1.png'
       },
       {
@@ -119,7 +119,7 @@ const createEmployeePayrollJSON = () => {
         _salary: '400000',
         _startDate: '15 Nov 2016',
         _note: '',
-        _id: new Date().getTime() + 1,
+        id: new Date().getTime() + 1,
         _profilePic: '..\assets\Ellipse -5.png'
       }
     ];
